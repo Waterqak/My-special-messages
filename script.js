@@ -11,9 +11,14 @@ const compliments = [
 const complimentBtn = document.getElementById('compliment-btn');
 const textDisplay = document.getElementById('compliment-text');
 
-complimentBtn.addEventListener('click', () => {
-    const randomIndex = Math.floor(Math.random() * compliments.length);
-    textDisplay.textContent = compliments[randomIndex];
+complimentBtn.addEventListener('click', (e) => {
+    // Add a quick fade out/in effect for the text
+    textDisplay.style.opacity = 0;
+    setTimeout(() => {
+        const randomIndex = Math.floor(Math.random() * compliments.length);
+        textDisplay.textContent = compliments[randomIndex];
+        textDisplay.style.opacity = 1;
+    }, 300);
 });
 
 // --- 2. Music Player ---
@@ -25,15 +30,16 @@ musicBtn.addEventListener('click', () => {
     if (isPlaying) {
         bgMusic.pause();
         musicBtn.textContent = "🎵 Play Our Song";
+        musicBtn.style.background = "var(--dark-pink)";
     } else {
         bgMusic.play();
         musicBtn.textContent = "⏸️ Pause Song";
+        musicBtn.style.background = "var(--leaf-green)"; // Changes color when playing
     }
     isPlaying = !isPlaying;
 });
 
 // --- 3. Scroll Fade-in Animation ---
-// This makes the cards fade in beautifully as she scrolls down
 const cards = document.querySelectorAll('.card');
 const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -42,7 +48,7 @@ const observer = new IntersectionObserver((entries) => {
             entry.target.style.transform = "translateY(0)";
         }
     });
-}, { threshold: 0.1 }); // Triggers when 10% of the card is visible
+}, { threshold: 0.1 }); 
 
 cards.forEach(card => observer.observe(card));
 
@@ -52,19 +58,37 @@ function createPetal() {
     const petal = document.createElement('div');
     petal.classList.add('petal');
     
-    // Randomize petal size, start position, and falling speed
     petal.style.left = Math.random() * 100 + 'vw';
     petal.style.width = Math.random() * 10 + 10 + 'px';
     petal.style.height = petal.style.width;
-    petal.style.animationDuration = Math.random() * 3 + 5 + 's'; // Falls between 5-8 seconds
+    petal.style.animationDuration = Math.random() * 3 + 5 + 's'; 
     
     container.appendChild(petal);
     
-    // Remove the petal after it falls to keep the website running fast
     setTimeout(() => {
         petal.remove();
     }, 8000);
 }
-
-// Generate a new petal every 400 milliseconds
 setInterval(createPetal, 400);
+
+// --- 5. Interactive Click Hearts (NEW!) ---
+// Whenever she clicks anywhere on the page, a little heart floats up
+document.addEventListener('click', function(e) {
+    // Don't spawn hearts if she is clicking the buttons
+    if(e.target.tagName === 'BUTTON') return;
+
+    const heart = document.createElement('div');
+    heart.innerHTML = '❤️'; // You can change this to 🌸 if you prefer!
+    heart.classList.add('click-heart');
+    
+    // Position the heart exactly where she clicked
+    heart.style.left = `${e.pageX - 10}px`;
+    heart.style.top = `${e.pageY - 10}px`;
+    
+    document.body.appendChild(heart);
+    
+    // Remove the heart from the code after the float animation finishes
+    setTimeout(() => {
+        heart.remove();
+    }, 1000);
+});
