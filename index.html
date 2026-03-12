@@ -43,9 +43,21 @@
 
     <main class="container">
         <section class="card interactive-section tilt-card">
-            <h2>For When You Need a Reminder</h2>
-            <p id="compliment-text">Click the button below for a little reminder of why you're amazing.</p>
+            <h2>Water the Flower</h2>
+            <div class="garden-container">
+                <div id="flower-stage" class="flower-emoji">🌱</div>
+                <div class="water-progress-bar">
+                    <div id="water-fill"></div>
+                </div>
+                <p id="water-count-text">Watering Level: 0/10</p>
+            </div>
+            
+            <p id="compliment-text">Click the button below to see her grow!</p>
             <button id="compliment-btn" class="pulse-btn">Water the Flower 💧</button>
+
+            <div id="secret-message" class="hidden-message">
+                <p>🌸 "You've bloomed! Just like this flower, my love for you grows every single day. You are the most beautiful part of my life." 🌸</p>
+            </div>
         </section>
 
         <section class="card tilt-card">
