@@ -4,17 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Watering My Favorite Flower</title>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Nunito:wght@400;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
 </head>
 <body>
 
+    <div id="scroll-progress"></div>
+
+    <div class="custom-cursor"></div>
+
+    <div id="lightbox" class="hidden-screen">
+        <span id="close-lightbox">✖</span>
+        <img id="lightbox-img" src="" alt="Memory">
+    </div>
+
     <div id="welcome-screen">
         <div class="welcome-content">
-            <h1>For Tofu 🌸</h1>
-            <p>Are you ready?</p>
-            <button id="enter-btn">Open My Heart</button>
+            <h1 class="reveal-text" style="animation-delay: 0.2s;">For Tofu 🌸</h1>
+            <p class="reveal-text" style="animation-delay: 0.6s;">Are you ready?</p>
+            <button id="enter-btn" class="reveal-text" style="animation-delay: 1s;">Open My Heart</button>
         </div>
     </div>
 
@@ -33,13 +42,13 @@
     </header>
 
     <main class="container">
-        <section class="card interactive-section">
+        <section class="card interactive-section tilt-card">
             <h2>For When You Need a Reminder</h2>
             <p id="compliment-text">Click the button below for a little reminder of why you're amazing.</p>
             <button id="compliment-btn" class="pulse-btn">Water the Flower 💧</button>
         </section>
 
-        <section class="card">
+        <section class="card tilt-card">
             <h2>Why I Love You</h2>
             <ul class="stagger-list">
                 <li>The way you actually enjoy playing games like Roblox with me.</li>
@@ -50,17 +59,17 @@
             </ul>
         </section>
 
-        <section class="card">
+        <section class="card tilt-card">
             <h2>Our Core Memories</h2>
             <div class="gallery">
-                <div class="gallery-item"><img src="roblox.jpg" alt="Roblox Screen"></div>
-                <div class="gallery-item"><img src="discord.jpg" alt="Funny Chat"></div>
-                <div class="gallery-item"><img src="game.jpg" alt="Gaming together"></div>
+                <div class="gallery-item"><img src="roblox.jpg" alt="Roblox Screen" class="enlargeable"></div>
+                <div class="gallery-item"><img src="discord.jpg" alt="Funny Chat" class="enlargeable"></div>
+                <div class="gallery-item"><img src="game.jpg" alt="Gaming together" class="enlargeable"></div>
             </div>
-            <p class="caption">(Hover over the pictures!)</p>
+            <p class="caption">(Click the pictures to enlarge them!)</p>
         </section>
 
-        <section class="card letter-wrapper">
+        <section class="card letter-wrapper tilt-card">
             <h2>A Letter to My Tofu</h2>
             <div class="letter-paper">
                 <p id="typewriter-text1"></p>
@@ -71,7 +80,7 @@
         </section>
     </main>
 
-    <footer>Built with ❤️ just for you.</footer>
+    <footer>Built with <span class="beating-heart">❤️</span> just for you.</footer>
 
 </body>
 </html>
