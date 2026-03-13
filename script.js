@@ -729,4 +729,72 @@
         }, { passive: true });
     })();
 
+    // ═══════════════════════════════════════════════════════
+    // 17. MARRIAGE CERTIFICATE SIGNING
+    // ═══════════════════════════════════════════════════════
+    (function initMarriageCert() {
+        const signBtn     = $('#cert-sign-btn');
+        const sigMoonName = $('#sig-moon-name');
+        const sigHimName  = $('#sig-him-name');
+        const moonSigLine = $('#moon-sig-line');
+        const seal        = $('#cert-seal');
+        const prompt      = $('#cert-prompt');
+        const signedNote  = $('#cert-signed-note');
+        const dlWrap      = $('#cert-download-wrap');
+
+        if (!signBtn) return;
+
+        // Pre-fill "Him" side immediately (he already signed)
+        sigHimName.textContent = 'Him ♡';
+        sigHimName.classList.add('signed');
+
+        const signedMessages = [
+            "It's official. Legally binding under moonlight. 🌙",
+            "Signed, sealed, and witnessed by every star up there. ✦",
+            "You said yes. I'm keeping this forever. 💍",
+            "The moon herself has signed. That's final.",
+        ];
+
+        signBtn.addEventListener('click', () => {
+            if (signBtn.disabled) return;
+            signBtn.disabled = true;
+
+            // Animate the signature appearing letter by letter
+            const name = 'Moon ♡';
+            sigMoonName.textContent = '';
+            sigMoonName.classList.add('signed');
+            moonSigLine.classList.add('signed');
+
+            let i = 0;
+            function typeSig() {
+                if (i < name.length) {
+                    sigMoonName.textContent += name[i++];
+                    setTimeout(typeSig, 80);
+                } else {
+                    // Stamp the seal
+                    setTimeout(() => {
+                        seal.classList.add('stamped');
+                        if (window._shootStar) window._shootStar();
+                        spawnConfettiBurst(45);
+                    }, 300);
+
+                    // Show message
+                    setTimeout(() => {
+                        const msg = signedMessages[randInt(0, signedMessages.length - 1)];
+                        signedNote.textContent = msg;
+                        signedNote.classList.add('visible');
+                        prompt.style.opacity = '0';
+                        signBtn.style.display = 'none';
+                    }, 600);
+
+                    // Show download
+                    setTimeout(() => {
+                        dlWrap.style.display = 'block';
+                    }, 1400);
+                }
+            }
+            typeSig();
+        });
+    })();
+
 })();

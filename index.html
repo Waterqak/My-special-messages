@@ -248,6 +248,139 @@
             </div>
         </section>
 
+        <!-- ════════════════════════════════════════════════════
+     MARRIAGE CERTIFICATE SECTION
+     Add this block inside <main class="container"> in index.html,
+     after the letter-card section and before </main>
+     ════════════════════════════════════════════════════ -->
+
+        <!-- Marriage Certificate -->
+        <section class="card tilt-card" id="marry-card">
+            <div class="card-shimmer"></div>
+
+            <h2><span class="h2-icon">💍</span> Will You Be My Wife?</h2>
+            <p class="card-sub">A very serious, extremely official, completely binding document. Mostly.</p>
+
+            <!-- The paper itself -->
+            <div class="cert-paper" id="cert-paper">
+
+                <div class="cert-stars" aria-hidden="true">
+                    <span class="cert-star" style="--cx:6%;--cy:8%;--cd:0s">✦</span>
+                    <span class="cert-star" style="--cx:94%;--cy:7%;--cd:.4s">✦</span>
+                    <span class="cert-star" style="--cx:4%;--cy:92%;--cd:.8s">✶</span>
+                    <span class="cert-star" style="--cx:96%;--cy:91%;--cd:.2s">✶</span>
+                    <span class="cert-star" style="--cx:50%;--cy:3%;--cd:.6s">⋆</span>
+                    <span class="cert-star" style="--cx:8%;--cy:50%;--cd:1s">⋆</span>
+                    <span class="cert-star" style="--cx:92%;--cy:50%;--cd:.3s">✦</span>
+                </div>
+
+                <!-- Corner ornaments -->
+                <div class="cert-corner cert-corner-tl" aria-hidden="true"></div>
+                <div class="cert-corner cert-corner-tr" aria-hidden="true"></div>
+                <div class="cert-corner cert-corner-bl" aria-hidden="true"></div>
+                <div class="cert-corner cert-corner-br" aria-hidden="true"></div>
+
+                <p class="cert-eyebrow">✦ &nbsp; C E R T I F I C A T E &nbsp; O F &nbsp; U N I O N &nbsp; ✦</p>
+
+                <h3 class="cert-title">Marriage</h3>
+
+                <div class="cert-divider" aria-hidden="true">
+                    <span class="cert-divider-line"></span>
+                    <span class="cert-divider-moon">🌙</span>
+                    <span class="cert-divider-line"></span>
+                </div>
+
+                <p class="cert-intro">This document joyfully declares and bears witness that</p>
+
+                <div class="cert-names">
+                    <div class="cert-name-block">
+                        <span class="cert-name cert-name-him">Him</span>
+                        <span class="cert-name-label">party of the first part</span>
+                    </div>
+                    <span class="cert-and">and</span>
+                    <div class="cert-name-block">
+                        <span class="cert-name cert-name-moon">Moon</span>
+                        <span class="cert-name-label">party of the second part</span>
+                    </div>
+                </div>
+
+                <p class="cert-body">
+                    have, on this day, freely and joyfully agreed to enter into
+                    a union of love, laughter, and unwavering companionship —
+                    to choose each other, in every ordinary and extraordinary moment,
+                    for all the days that follow this one.
+                </p>
+
+                <div class="cert-vow-block">
+                    <p class="cert-vow-label">✦ &nbsp; T H E &nbsp; V O W S &nbsp; ✦</p>
+                    <p class="cert-vow">
+                        I promise to be someone who makes things feel lighter.<br>
+                        To show up, to stay, to keep choosing you.<br>
+                        To laugh with you at things no one else would understand,<br>
+                        and to be there even when words aren't enough.<br>
+                        I vow to love every phase of you — even the ones<br>
+                        you're not sure are worth loving yet.
+                    </p>
+                </div>
+
+                <div class="cert-date-row">
+                    <span class="cert-date-label">DATE</span>
+                    <span class="cert-date-value">21st April · Forever After</span>
+                </div>
+
+                <div class="cert-sigs">
+                    <!-- Him signature -->
+                    <div class="cert-sig-block">
+                        <div class="cert-sig-line"></div>
+                        <span class="cert-sig-name" id="sig-him-name">___________</span>
+                        <span class="cert-sig-label">Signature · Him</span>
+                    </div>
+
+                    <!-- Seal in centre -->
+                    <div class="cert-seal" id="cert-seal" aria-label="Official seal">
+                        <div class="cert-seal-ring cert-seal-outer"></div>
+                        <div class="cert-seal-ring cert-seal-inner"></div>
+                        <div class="cert-seal-content">
+                            <span class="cert-seal-moon">🌙</span>
+                            <span class="cert-seal-text">OFFICIAL<br>SEAL</span>
+                        </div>
+                    </div>
+
+                    <!-- Moon signature -->
+                    <div class="cert-sig-block">
+                        <div class="cert-sig-line cert-sig-line-moon" id="moon-sig-line"></div>
+                        <span class="cert-sig-name cert-sig-moon-name" id="sig-moon-name">___________</span>
+                        <span class="cert-sig-label">Signature · Moon</span>
+                    </div>
+                </div>
+
+                <p class="cert-footer">
+                    written under moonlight &nbsp;·&nbsp; sealed with love &nbsp;·&nbsp; binding under all known stars
+                </p>
+                <p class="cert-small-print">
+                    This certificate carries no legal weight but all the emotional weight in the world.
+                </p>
+
+            </div><!-- /cert-paper -->
+
+            <!-- Sign interaction -->
+            <div class="cert-action" id="cert-action">
+                <p class="cert-prompt" id="cert-prompt">She just needs to sign. One tap.</p>
+                <button class="moon-btn cert-sign-btn" id="cert-sign-btn">
+                    ✦ &nbsp; Sign Here, Moon &nbsp; 💍
+                </button>
+                <p class="cert-signed-note" id="cert-signed-note"></p>
+            </div>
+
+            <!-- Download -->
+            <div class="cert-download-wrap" id="cert-download-wrap" style="display:none">
+                <a class="moon-btn cert-dl-btn" href="moon_marriage_certificate.pdf" download="moon_marriage_certificate.pdf">
+                    🌙 &nbsp; Download Your Certificate
+                </a>
+            </div>
+
+        </section>
+
     </main>
 
     <footer>

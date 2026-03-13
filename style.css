@@ -644,3 +644,336 @@ footer {
         transition-duration: 0.01ms !important;
     }
 }
+
+/* ═══════════════════════════════════════════
+   MARRIAGE CERTIFICATE SECTION
+   Append this to the bottom of style.css
+   ═══════════════════════════════════════════ */
+
+/* ── Paper ───────────────────────────────── */
+.cert-paper {
+    position: relative;
+    background: linear-gradient(160deg, #06101f 0%, #080f22 50%, #060d1c 100%);
+    border: 1.5px solid rgba(232,201,106,.35);
+    border-radius: 12px;
+    padding: clamp(1.8rem, 5vw, 2.8rem) clamp(1.4rem, 4vw, 2.6rem);
+    margin: .5rem 0 2rem;
+    overflow: hidden;
+    box-shadow:
+        0 0 0 4px rgba(232,201,106,.06),
+        0 0 0 5px rgba(200,220,248,.04),
+        inset 0 1px 0 rgba(255,255,255,.04),
+        0 20px 60px rgba(0,0,0,.5);
+    /* Subtle paper texture via repeating gradient */
+    background-image:
+        repeating-linear-gradient(
+            transparent, transparent 39px,
+            rgba(200,220,248,.028) 39px,
+            rgba(200,220,248,.028) 40px
+        ),
+        linear-gradient(160deg, #06101f 0%, #080f22 50%, #060d1c 100%);
+}
+
+/* ── Corner ornaments ─────────────────────── */
+.cert-corner {
+    position: absolute;
+    width: 22px; height: 22px;
+    pointer-events: none;
+}
+.cert-corner::before,
+.cert-corner::after {
+    content: '';
+    position: absolute;
+    background: var(--gold);
+    border-radius: 1px;
+}
+.cert-corner::before { width: 22px; height: 1.5px; top: 0; left: 0; }
+.cert-corner::after  { width: 1.5px; height: 22px; top: 0; left: 0; }
+
+.cert-corner-tl { top: 10px; left: 10px; }
+.cert-corner-tr { top: 10px; right: 10px; transform: scaleX(-1); }
+.cert-corner-bl { bottom: 10px; left: 10px; transform: scaleY(-1); }
+.cert-corner-br { bottom: 10px; right: 10px; transform: scale(-1,-1); }
+
+/* ── Background stars ─────────────────────── */
+.cert-stars { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+.cert-star {
+    position: absolute;
+    left: var(--cx); top: var(--cy);
+    color: var(--gold); font-size: 10px; opacity: .28;
+    animation: bstarTwinkle 3.8s ease-in-out infinite;
+    animation-delay: var(--cd);
+}
+
+/* ── Typography ──────────────────────────── */
+.cert-paper > * { position: relative; z-index: 1; }
+
+.cert-eyebrow {
+    text-align: center;
+    font-family: var(--font-body);
+    font-size: 9px; font-weight: 500;
+    letter-spacing: .32em; text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: .9rem;
+}
+
+.cert-title {
+    font-family: var(--font-head);
+    font-size: clamp(2.2rem, 6vw, 3.4rem);
+    font-weight: 500; font-style: italic;
+    color: var(--silver);
+    text-align: center;
+    letter-spacing: .02em;
+    line-height: 1.1;
+    margin-bottom: .6rem;
+    text-shadow: 0 0 60px rgba(200,220,248,.22);
+}
+
+.cert-divider {
+    display: flex; align-items: center;
+    gap: .8rem; margin: .4rem 0 1.2rem;
+}
+.cert-divider-line {
+    flex: 1; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(232,201,106,.45), transparent);
+}
+.cert-divider-moon { font-size: 1rem; line-height: 1; }
+
+.cert-intro {
+    text-align: center;
+    font-family: var(--font-head); font-style: italic;
+    font-size: 13px; color: var(--text-body);
+    margin-bottom: 1.2rem;
+}
+
+/* ── Names row ───────────────────────────── */
+.cert-names {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: clamp(.8rem, 3vw, 2rem);
+    margin-bottom: 1.4rem;
+    flex-wrap: wrap;
+}
+.cert-name-block {
+    display: flex; flex-direction: column;
+    align-items: center; gap: .3rem;
+    min-width: 100px;
+}
+.cert-name {
+    font-family: var(--font-head); font-style: italic;
+    font-size: clamp(1.4rem, 4vw, 2rem); font-weight: 600;
+    line-height: 1;
+    position: relative;
+    padding-bottom: .3rem;
+}
+.cert-name::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 1.5px;
+    border-radius: 2px;
+}
+.cert-name-him       { color: var(--gold); }
+.cert-name-him::after { background: var(--gold); }
+.cert-name-moon      { color: var(--silver); }
+.cert-name-moon::after { background: var(--silver); }
+.cert-name-label {
+    font-size: 9px; letter-spacing: .2em; text-transform: uppercase;
+    color: var(--text-muted); font-weight: 400;
+}
+.cert-and {
+    font-family: var(--font-head); font-style: italic;
+    font-size: clamp(1rem, 2.5vw, 1.3rem);
+    color: var(--text-muted);
+    padding-bottom: 1.1rem;
+}
+
+/* ── Body ────────────────────────────────── */
+.cert-body {
+    font-family: var(--font-head); font-style: italic;
+    font-size: clamp(.9rem, 2.2vw, 1.05rem);
+    color: var(--text-body);
+    text-align: center;
+    line-height: 1.8;
+    margin-bottom: 1.4rem;
+}
+
+/* ── Vow block ───────────────────────────── */
+.cert-vow-block {
+    border: 1px solid rgba(200,220,248,.1);
+    border-radius: 10px;
+    background: rgba(200,220,248,.025);
+    padding: 1.1rem 1.4rem;
+    margin-bottom: 1.4rem;
+    text-align: center;
+}
+.cert-vow-label {
+    font-size: 9px; letter-spacing: .3em; text-transform: uppercase;
+    color: var(--gold); font-weight: 500;
+    margin-bottom: .7rem;
+}
+.cert-vow {
+    font-family: var(--font-head); font-style: italic;
+    font-size: clamp(.88rem, 2vw, 1rem);
+    color: var(--silver); line-height: 1.9;
+}
+
+/* ── Date ────────────────────────────────── */
+.cert-date-row {
+    display: flex; flex-direction: column; align-items: center;
+    gap: .25rem; margin-bottom: 1.6rem;
+}
+.cert-date-label {
+    font-size: 9px; letter-spacing: .25em; text-transform: uppercase;
+    color: var(--text-muted);
+}
+.cert-date-value {
+    font-family: var(--font-head); font-style: italic;
+    font-size: clamp(.95rem, 2.2vw, 1.15rem);
+    color: var(--silver);
+    border-bottom: 1px solid rgba(200,220,248,.25);
+    padding-bottom: .25rem;
+    min-width: 200px; text-align: center;
+}
+
+/* ── Signatures ──────────────────────────── */
+.cert-sigs {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.4rem;
+    flex-wrap: wrap;
+}
+.cert-sig-block {
+    flex: 1; min-width: 100px; max-width: 160px;
+    display: flex; flex-direction: column;
+    align-items: center; gap: .3rem;
+}
+.cert-sig-line {
+    width: 100%; height: 1.5px;
+    background: linear-gradient(90deg, transparent, rgba(232,201,106,.6), transparent);
+    border-radius: 2px;
+    transition: background 0.6s ease;
+}
+.cert-sig-line-moon {
+    background: linear-gradient(90deg, transparent, rgba(200,220,248,.35), transparent);
+}
+/* When signed, Moon's line glows gold */
+.cert-sig-line-moon.signed {
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    box-shadow: 0 0 10px rgba(232,201,106,.4);
+}
+.cert-sig-name {
+    font-family: var(--font-script);
+    font-size: clamp(1.3rem, 3vw, 1.7rem);
+    color: var(--text-muted);
+    transition: color .5s, text-shadow .5s;
+    text-align: center;
+    min-height: 1.8rem;
+}
+.cert-sig-name.signed {
+    color: var(--gold);
+    text-shadow: 0 0 20px rgba(232,201,106,.5);
+}
+.cert-sig-label {
+    font-size: 8px; letter-spacing: .2em; text-transform: uppercase;
+    color: var(--text-muted);
+}
+.cert-sig-moon-name { color: rgba(200,220,248,.28); }
+
+/* ── Seal ────────────────────────────────── */
+.cert-seal {
+    position: relative;
+    width: 74px; height: 74px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: transform .6s var(--ease-spring);
+}
+.cert-seal.stamped { animation: sealStamp .55s var(--ease-spring) forwards; }
+@keyframes sealStamp {
+    0%   { transform: scale(2.4) rotate(-8deg); opacity: 0; }
+    60%  { transform: scale(0.92) rotate(2deg); opacity: 1; }
+    80%  { transform: scale(1.06) rotate(-1deg); }
+    100% { transform: scale(1) rotate(0deg); }
+}
+
+.cert-seal-ring {
+    position: absolute; border-radius: 50%;
+    border-style: solid;
+}
+.cert-seal-outer {
+    inset: 0;
+    border-width: 1.5px;
+    border-color: rgba(232,201,106,.4);
+}
+.cert-seal-inner {
+    inset: 5px;
+    border-width: 1px;
+    border-color: rgba(200,220,248,.25);
+    background: rgba(232,201,106,.04);
+}
+.cert-seal.stamped .cert-seal-outer { border-color: var(--gold); box-shadow: 0 0 14px rgba(232,201,106,.4); }
+.cert-seal.stamped .cert-seal-inner { border-color: rgba(232,201,106,.5); background: rgba(232,201,106,.08); }
+
+.cert-seal-content {
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 1px;
+}
+.cert-seal-moon  { font-size: 1rem; line-height: 1; }
+.cert-seal-text  {
+    font-size: 6.5px; letter-spacing: .1em;
+    color: var(--text-muted); text-align: center;
+    text-transform: uppercase; line-height: 1.4;
+    transition: color .5s;
+}
+.cert-seal.stamped .cert-seal-text { color: var(--gold); }
+
+/* ── Footer text on paper ─────────────────── */
+.cert-footer {
+    text-align: center;
+    font-size: 9px; letter-spacing: .16em; text-transform: uppercase;
+    color: var(--text-muted); margin-bottom: .3rem;
+}
+.cert-small-print {
+    text-align: center;
+    font-size: 8px; color: rgba(110,137,184,.45);
+    font-style: italic;
+}
+
+/* ── Action area below paper ──────────────── */
+.cert-action { text-align: center; }
+.cert-prompt {
+    font-family: var(--font-head); font-style: italic;
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
+    color: var(--text-muted); margin-bottom: 1.2rem;
+    transition: opacity .5s;
+}
+.cert-sign-btn { font-size: 14px !important; padding: 15px 46px !important; }
+
+.cert-signed-note {
+    font-family: var(--font-head); font-style: italic;
+    font-size: clamp(1rem, 2.8vw, 1.3rem);
+    color: var(--gold);
+    min-height: 1.8rem;
+    margin-top: 1rem;
+    opacity: 0; transform: translateY(8px);
+    transition: opacity .7s var(--ease-out), transform .7s var(--ease-out);
+    text-shadow: 0 0 24px rgba(232,201,106,.3);
+}
+.cert-signed-note.visible { opacity: 1; transform: translateY(0); }
+
+/* ── Download button ──────────────────────── */
+.cert-download-wrap {
+    text-align: center;
+    margin-top: 1.2rem;
+    animation: revealUp .8s var(--ease-out) forwards;
+}
+.cert-dl-btn {
+    text-decoration: none !important;
+    display: inline-block;
+    font-size: 13px !important;
+    padding: 13px 38px !important;
+}
+.cert-dl-btn:hover { text-decoration: none !important; }
