@@ -535,8 +535,9 @@
         if (typingDone) return; typingDone=true;
         const lines = [
             { id:'line-1',   text:'Dear Moon,' },
-            { id:'line-2',   text:"I made this for you because I wanted you to have something real — not a text, not a voice note. Something you can come back to. Something that just says: I see you, and I think you're incredible." },
+            { id:'line-2',   text:"I made this for you because I wanted you to have something real not a text, not a voice note. Something you can come back to. Something that just says: I see you, and I think you're incredible." },
             { id:'line-3',   text:"You make things feel lighter just by being around. That's not nothing. That's actually everything." },
+            { id:'line-4',   text:"No matter what you will still be my cutest person, Even though u hurt me, I will be there for you." },
             { id:'line-sig', text:'— Water ❤️' },
         ];
         let li=0, ci=0;
