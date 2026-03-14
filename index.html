@@ -28,12 +28,15 @@
         <div id="lightbox-backdrop"></div>
         <button id="close-lightbox" aria-label="Close photo">✕</button>
         <div id="lightbox-inner">
-            <img id="lightbox-img" src="" alt="Our memory">
-            <p id="lightbox-caption"></p>
+            <button id="lb-prev" aria-label="Previous photo">‹</button>
+            <div id="lb-img-wrap">
+                <img id="lightbox-img" src="" alt="Our memory">
+            </div>
+            <button id="lb-next" aria-label="Next photo">›</button>
         </div>
+        <p id="lightbox-caption"></p>
     </div>
 
-    <!-- Birthday confetti layer -->
     <div id="confetti-container"></div>
 
     <!-- Welcome -->
@@ -52,16 +55,27 @@
         </div>
     </div>
 
-    <audio id="bg-music" loop crossorigin="anonymous">
-        <source src="our-song.mp3" type="audio/mpeg">
-    </audio>
+    <!-- Audio element — src is set by JS playlist -->
+    <audio id="bg-music" crossorigin="anonymous"></audio>
 
+    <!-- Music Panel — ring viz + full player controls -->
     <div id="music-panel">
         <canvas id="music-ring-canvas"></canvas>
-        <button id="music-btn">
-            <span id="music-icon">🎵</span>
-            <span id="music-label">Our Song</span>
-        </button>
+        <div id="music-player">
+            <div id="music-track-info">
+                <span id="music-track-name">–</span>
+                <span id="music-track-num"></span>
+            </div>
+            <div id="music-controls">
+                <button id="btn-prev"    aria-label="Previous track"  class="ctrl-btn">⏮</button>
+                <button id="btn-shuffle" aria-label="Toggle shuffle"  class="ctrl-btn" id="btn-shuffle">⇄</button>
+                <button id="music-btn"   aria-label="Play / Pause">
+                    <span id="music-icon">🎵</span>
+                    <span id="music-label">Our Song</span>
+                </button>
+                <button id="btn-next"    aria-label="Next track"      class="ctrl-btn">⏭</button>
+            </div>
+        </div>
     </div>
 
     <!-- Header -->
@@ -84,7 +98,7 @@
 
     <main class="container">
 
-        <!-- Birthday Countdown Card -->
+        <!-- Birthday Countdown -->
         <section class="card tilt-card birthday-card" id="birthday-card">
             <div class="card-shimmer"></div>
             <div class="bday-stars">
@@ -127,12 +141,11 @@
             </div>
         </section>
 
-        <!-- Bloom Tree Card -->
+        <!-- Bloom Tree -->
         <section class="card tilt-card" id="bloom-card">
             <div class="card-shimmer"></div>
             <h2><span class="h2-icon">🌱</span> Grow the Moon Tree</h2>
             <p class="card-sub">Click the button and watch something grow.</p>
-
             <div class="bloom-area">
                 <div class="tree-wrap">
                     <svg id="tree-svg" viewBox="0 0 120 185" xmlns="http://www.w3.org/2000/svg" overflow="visible" aria-hidden="true">
@@ -183,18 +196,11 @@
                         <circle class="tp t-moon-crater" cx="70" cy="28" r="2" data-s="10"/>
                     </svg>
                 </div>
-                <div class="progress-track">
-                    <div id="water-fill" class="progress-bar"></div>
-                </div>
+                <div class="progress-track"><div id="water-fill" class="progress-bar"></div></div>
                 <p id="water-count-text" class="level-text">Moonlight Level &nbsp;0 / 10</p>
             </div>
-
             <p id="compliment-text" class="compliment-display">Click the button below.</p>
-
-            <button id="compliment-btn" class="moon-btn pulse-glow">
-                ✦ &nbsp;Send Moonlight &nbsp;🌙
-            </button>
-
+            <button id="compliment-btn" class="moon-btn pulse-glow">✦ &nbsp;Send Moonlight &nbsp;🌙</button>
             <div id="secret-message" class="secret">
                 <div class="secret-inner">
                     <span class="secret-moon">🌕</span>
@@ -218,26 +224,15 @@
             </ul>
         </section>
 
-        <!-- Memories -->
+        <!-- Memories — gallery rendered by JS from CONFIG -->
         <section class="card tilt-card" id="memories-card">
             <div class="card-shimmer"></div>
             <h2><span class="h2-icon">📷</span> Moments I Keep</h2>
             <p class="card-sub">Nothing special — just us. That's what makes them special.</p>
-            <div class="gallery">
-                <figure class="gallery-item" data-caption="our game nights">
-                    <img src="roblox.png" alt="Playing Roblox together" class="enlargeable" data-caption="our game nights">
-                    <figcaption>our game nights</figcaption>
-                </figure>
-                <figure class="gallery-item" data-caption="that one message">
-                    <img src="discord.png" alt="Our chats" class="enlargeable" data-caption="that one message">
-                    <figcaption>that one message</figcaption>
-                </figure>
-                <figure class="gallery-item" data-caption="us, as always">
-                    <img src="game.png" alt="Gaming together" class="enlargeable" data-caption="us, as always">
-                    <figcaption>us, as always</figcaption>
-                </figure>
+            <div class="gallery" id="gallery-grid">
+                <!-- populated by JS from CONFIG.gallery -->
             </div>
-            <p class="caption">tap any photo to open it ✦</p>
+            <p class="caption" id="gallery-hint" style="display:none">tap any photo to open it ✦</p>
         </section>
 
         <!-- Marriage Certificate -->
@@ -245,7 +240,6 @@
             <div class="card-shimmer"></div>
             <h2><span class="h2-icon">💍</span> Will You Be My Wife?</h2>
             <p class="card-sub">A very serious, extremely official, completely binding document. Mostly.</p>
-
             <div class="cert-paper" id="cert-paper">
                 <div class="cert-stars" aria-hidden="true">
                     <span class="cert-star" style="--cx:6%;--cy:8%;--cd:0s">✦</span>
@@ -256,20 +250,18 @@
                     <span class="cert-star" style="--cx:8%;--cy:50%;--cd:1s">⋆</span>
                     <span class="cert-star" style="--cx:92%;--cy:50%;--cd:.3s">✦</span>
                 </div>
-                <div class="cert-corner cert-corner-tl" aria-hidden="true"></div>
-                <div class="cert-corner cert-corner-tr" aria-hidden="true"></div>
-                <div class="cert-corner cert-corner-bl" aria-hidden="true"></div>
-                <div class="cert-corner cert-corner-br" aria-hidden="true"></div>
-
+                <div class="cert-corner cert-corner-tl"></div>
+                <div class="cert-corner cert-corner-tr"></div>
+                <div class="cert-corner cert-corner-bl"></div>
+                <div class="cert-corner cert-corner-br"></div>
                 <p class="cert-eyebrow">✦ &nbsp; C E R T I F I C A T E &nbsp; O F &nbsp; U N I O N &nbsp; ✦</p>
                 <h3 class="cert-title">Marriage</h3>
-                <div class="cert-divider" aria-hidden="true">
+                <div class="cert-divider">
                     <span class="cert-divider-line"></span>
                     <span class="cert-divider-moon">🌙</span>
                     <span class="cert-divider-line"></span>
                 </div>
                 <p class="cert-intro">This document joyfully declares and bears witness that</p>
-
                 <div class="cert-names">
                     <div class="cert-name-block">
                         <span class="cert-name cert-name-him">Water</span>
@@ -281,38 +273,22 @@
                         <span class="cert-name-label">party of the second part</span>
                     </div>
                 </div>
-
-                <p class="cert-body">
-                    have, on this day, freely and joyfully agreed to enter into
-                    a union of love, laughter, and unwavering companionship —
-                    to choose each other, in every ordinary and extraordinary moment,
-                    for all the days that follow this one.
-                </p>
-
+                <p class="cert-body">have, on this day, freely and joyfully agreed to enter into a union of love, laughter, and unwavering companionship — to choose each other, in every ordinary and extraordinary moment, for all the days that follow this one.</p>
                 <div class="cert-vow-block">
                     <p class="cert-vow-label">✦ &nbsp; T H E &nbsp; V O W S &nbsp; ✦</p>
-                    <p class="cert-vow">
-                        I promise to be someone who makes things feel lighter.<br>
-                        To show up, to stay, to keep choosing you.<br>
-                        To laugh with you at things no one else would understand,<br>
-                        and to be there even when words aren't enough.<br>
-                        I vow to love every phase of you — even the ones<br>
-                        you're not sure are worth loving yet.
-                    </p>
+                    <p class="cert-vow">I promise to be someone who makes things feel lighter.<br>To show up, to stay, to keep choosing you.<br>To laugh with you at things no one else would understand,<br>and to be there even when words aren't enough.<br>I vow to love every phase of you — even the ones<br>you're not sure are worth loving yet.</p>
                 </div>
-
                 <div class="cert-date-row">
                     <span class="cert-date-label">DATE</span>
                     <span class="cert-date-value">21st April · Forever After</span>
                 </div>
-
                 <div class="cert-sigs">
                     <div class="cert-sig-block">
                         <div class="cert-sig-line cert-sig-line-water"></div>
                         <span class="cert-sig-name cert-sig-water-name signed" id="sig-water-name">Water ♡</span>
                         <span class="cert-sig-label">Signature · Water</span>
                     </div>
-                    <div class="cert-seal" id="cert-seal" aria-label="Official seal">
+                    <div class="cert-seal" id="cert-seal">
                         <div class="cert-seal-ring cert-seal-outer"></div>
                         <div class="cert-seal-ring cert-seal-inner"></div>
                         <div class="cert-seal-content">
@@ -326,21 +302,13 @@
                         <span class="cert-sig-label">Signature · Moon</span>
                     </div>
                 </div>
-
                 <p class="cert-footer">written under moonlight &nbsp;·&nbsp; sealed with love &nbsp;·&nbsp; binding under all known stars</p>
                 <p class="cert-small-print">This certificate carries no legal weight but all the emotional weight in the world.</p>
             </div>
-
             <div class="cert-action" id="cert-action">
                 <p class="cert-prompt" id="cert-prompt">She just needs to sign. One tap.</p>
                 <button class="moon-btn cert-sign-btn" id="cert-sign-btn">✦ &nbsp; Sign Here, Moon &nbsp; 💍</button>
                 <p class="cert-signed-note" id="cert-signed-note"></p>
-            </div>
-
-            <div class="cert-download-wrap" id="cert-download-wrap" style="display:none">
-                <a class="moon-btn cert-dl-btn" href="moon_marriage_certificate.pdf" download="moon_marriage_certificate.pdf">
-                    🌙 &nbsp; Download Your Certificate
-                </a>
             </div>
         </section>
 
@@ -352,6 +320,7 @@
                 <p class="letter-line" id="line-1"></p>
                 <p class="letter-line" id="line-2"></p>
                 <p class="letter-line" id="line-3"></p>
+                <p class="letter-line" id="line-4"></p>
                 <p class="letter-line letter-sig" id="line-sig"></p>
             </div>
         </section>
