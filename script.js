@@ -1,40 +1,29 @@
 /* ═══════════════════════════════════════════════════════════════
-   MOON — script.js  ✦  Updated Edition
+   MOON — script.js  ✦  Polish Edition
 
    ┌─────────────────────────────────────────────────────────────┐
    │  ✦  EDIT THIS CONFIG BLOCK — everything else is automatic  │
    └─────────────────────────────────────────────────────────────┘
 
-   MUSIC
-   ─────
-   Drop your MP3 files into the  music/  folder, list them below.
-
-   GALLERY  (optional starting photos)
-   ────────
-   You can still list photos here — OR just drag and drop images
-   directly onto the gallery section in the browser. Both work,
-   and you can mix them. Drag many at once, no limit.
-
-   START DATE
-   ──────────
-   Set the date you started talking / became official.
-   Format: 'YYYY-MM-DD'
+   MUSIC  →  drop MP3s into  music/  and list them below
+   GALLERY → list permanent photos here, OR just drag & drop in browser
+   START DATE → set when you two started talking
 
    ═══════════════════════════════════════════════════════════════ */
 
 const CONFIG = {
 
-    /* ── WHEN YOU STARTED TALKING ──────────────────────────── */
-    startDate: '2024-06-01',   // ← change this to your real date
+    /* ── Date you started talking (YYYY-MM-DD) ─────────────── */
+    startDate: '2024-06-01',
 
-    /* ── PLAYLIST ───────────────────────────────────────────── */
+    /* ── Playlist ───────────────────────────────────────────── */
     playlist: [
-        { title: 'Our Song',      src: 'music/our-song.mp3'    },
+        { title: 'Our Song',      src: 'music/our-song.mp3'     },
         { title: 'Another Song',  src: 'music/another-song.mp3' },
         { title: 'Late Nights',   src: 'music/late-nights.mp3'  },
     ],
 
-    /* ── GALLERY (optional — you can also just drag and drop) ─ */
+    /* ── Optional starting gallery photos ──────────────────── */
     gallery: [
         // { src: 'images/gallery/photo1.jpg', caption: 'our game nights' },
         // { src: 'images/gallery/photo2.jpg', caption: 'that one message' },
@@ -43,9 +32,8 @@ const CONFIG = {
 };
 
 /* ═══════════════════════════════════════════════════════════════
-   DO NOT EDIT BELOW THIS LINE
+   INTERNALS — do not edit below
    ═══════════════════════════════════════════════════════════════ */
-
 (function () {
     'use strict';
 
@@ -56,7 +44,6 @@ const CONFIG = {
     const randInt = (a, b)       => Math.floor(rand(a, b + 1));
     const lerp    = (a, b, t)    => a + (b - a) * t;
 
-    /* ── SHUFFLE ─────────────────────────────────────────────── */
     function shuffle(arr) {
         const a = [...arr];
         for (let i = a.length - 1; i > 0; i--) {
@@ -65,25 +52,23 @@ const CONFIG = {
         return a;
     }
 
-    /* ── AUTO-CAPTION from filename ─────────────────────────── */
     function captionFromFilename(name) {
         return name
-            .replace(/\.[^.]+$/, '')          // strip extension
-            .replace(/[-_]+/g, ' ')           // hyphens/underscores → space
-            .replace(/\b\w/g, c => c.toUpperCase()) // Title Case
+            .replace(/\.[^.]+$/, '')
+            .replace(/[-_]+/g, ' ')
+            .replace(/\b\w/g, c => c.toUpperCase())
             .trim();
     }
 
-    /* ── NUMBER FORMATTER ────────────────────────────────────── */
     function fmtNum(n) {
         if (n >= 1_000_000) return (n / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
         if (n >= 1_000)     return (n / 1_000).toFixed(1).replace(/\.0$/, '') + 'K';
         return String(n);
     }
 
-    /* ═══════════════════════════════════════════════════════════
+    /* ═════════════════════════════════════════════════════════
        1. BIRTHDAY COUNTDOWN
-       ═══════════════════════════════════════════════════════════ */
+       ═════════════════════════════════════════════════════════ */
     (function initCountdown() {
         const dEl = $('#cd-d'), hEl = $('#cd-h'), mEl = $('#cd-m'), sEl = $('#cd-s');
         const msgEl = $('#bday-msg');
@@ -117,10 +102,7 @@ const CONFIG = {
         function tick() {
             const diff = getTarget() - new Date();
             if (diff <= 0) {
-                ['d','h','m','s'].forEach(k => {
-                    const el = document.getElementById('cd-'+k);
-                    if (el) el.textContent = '00';
-                });
+                ['d','h','m','s'].forEach(k => { const el = document.getElementById('cd-'+k); if(el) el.textContent='00'; });
                 if (msgEl) msgEl.textContent = bdayLines[bdayIdx % bdayLines.length];
                 if (diff > -86400000) { spawnConfettiBurst(); bdayIdx++; }
                 return;
@@ -144,65 +126,62 @@ const CONFIG = {
         tick(); setInterval(tick, 1000);
     })();
 
-    /* ═══════════════════════════════════════════════════════════
-       1b. TIME TOGETHER COUNTER
-       ═══════════════════════════════════════════════════════════ */
+    /* ═════════════════════════════════════════════════════════
+       1b. TIME TOGETHER
+       ═════════════════════════════════════════════════════════ */
     (function initTogether() {
-        const daysEl    = $('#tog-days');
-        const hoursEl   = $('#tog-hours');
-        const minsEl    = $('#tog-mins');
+        const daysEl  = $('#tog-days');
+        const hoursEl = $('#tog-hours');
+        const minsEl  = $('#tog-mins');
         if (!daysEl) return;
 
         const start = new Date(CONFIG.startDate || '2024-01-01');
 
-        function animateCount(el, target, duration = 1400) {
-            const startTime = performance.now();
-            function step(now) {
-                const t = Math.min((now - startTime) / duration, 1);
-                const ease = 1 - Math.pow(1 - t, 4);
-                const val = Math.floor(ease * target);
-                el.textContent = fmtNum(val);
-                if (t < 1) requestAnimationFrame(step);
+        function animateCount(el, target, duration) {
+            const t0 = performance.now();
+            (function step(now) {
+                const p = Math.min((now - t0) / duration, 1);
+                const e = 1 - Math.pow(1 - p, 4);
+                el.textContent = fmtNum(Math.floor(e * target));
+                if (p < 1) requestAnimationFrame(step);
                 else el.textContent = fmtNum(target);
-            }
-            requestAnimationFrame(step);
+            })(performance.now());
         }
 
         let animated = false;
-        function tick() {
+        function compute() {
             const diff = new Date() - start;
-            const totalMins  = Math.floor(diff / 60000);
-            const totalHours = Math.floor(diff / 3600000);
-            const totalDays  = Math.floor(diff / 86400000);
-
-            if (!animated) {
-                animated = true;
-                animateCount(daysEl,  totalDays,  1200);
-                animateCount(hoursEl, totalHours, 1500);
-                animateCount(minsEl,  totalMins,  1800);
-            } else {
-                daysEl.textContent  = fmtNum(totalDays);
-                hoursEl.textContent = fmtNum(totalHours);
-                minsEl.textContent  = fmtNum(totalMins);
-            }
+            return {
+                days:  Math.floor(diff / 86400000),
+                hours: Math.floor(diff / 3600000),
+                mins:  Math.floor(diff / 60000),
+            };
         }
 
-        // Trigger animation when card is visible
         const card = $('#together-card');
         if (card) {
-            const obs = new IntersectionObserver(entries => {
-                if (entries[0].isIntersecting) { tick(); obs.disconnect(); }
-            }, { threshold: 0.2 });
-            obs.observe(card);
+            new IntersectionObserver(entries => {
+                if (!entries[0].isIntersecting || animated) return;
+                animated = true;
+                const { days, hours, mins } = compute();
+                animateCount(daysEl,  days,  1200);
+                animateCount(hoursEl, hours, 1500);
+                animateCount(minsEl,  mins,  1800);
+            }, { threshold: 0.2 }).observe(card);
         }
+
         setInterval(() => {
-            if (animated) tick();
+            if (!animated) return;
+            const { days, hours, mins } = compute();
+            daysEl.textContent  = fmtNum(days);
+            hoursEl.textContent = fmtNum(hours);
+            minsEl.textContent  = fmtNum(mins);
         }, 60000);
     })();
 
-    /* ═══════════════════════════════════════════════════════════
+    /* ═════════════════════════════════════════════════════════
        2. CONFETTI
-       ═══════════════════════════════════════════════════════════ */
+       ═════════════════════════════════════════════════════════ */
     function spawnConfettiBurst(count = 60) {
         const cont = $('#confetti-container'); if (!cont) return;
         const cols = ['#e8c96a','#c4d8f5','#f5a0c0','#a0e0d0','#ffffff','#ffd700'];
@@ -218,9 +197,9 @@ const CONFIG = {
         cont.appendChild(f);
     }
 
-    /* ═══════════════════════════════════════════════════════════
-       3. NEBULA BACKGROUND
-       ═══════════════════════════════════════════════════════════ */
+    /* ═════════════════════════════════════════════════════════
+       3. NEBULA
+       ═════════════════════════════════════════════════════════ */
     (function initNebula() {
         const canvas = $('#nebula-canvas');
         const ctx    = canvas.getContext('2d', { alpha: false });
@@ -263,9 +242,9 @@ const CONFIG = {
         resize(); raf = requestAnimationFrame(draw);
     })();
 
-    /* ═══════════════════════════════════════════════════════════
-       4. STARS + SHOOTING STARS
-       ═══════════════════════════════════════════════════════════ */
+    /* ═════════════════════════════════════════════════════════
+       4. STARS
+       ═════════════════════════════════════════════════════════ */
     (function initStars() {
         const canvas = $('#star-canvas');
         const ctx    = canvas.getContext('2d');
@@ -274,7 +253,7 @@ const CONFIG = {
         function resize() {
             W = canvas.width = window.innerWidth;
             H = canvas.height = window.innerHeight;
-            stars = Array.from({ length:320 }, (_,i) => ({
+            stars = Array.from({ length:310 }, (_,i) => ({
                 x:rand(0,W), y:rand(0,H),
                 r: i<SPECIALS ? rand(1.2,2.4) : rand(0.15,1.1),
                 base:rand(0.08,.75), speed:rand(.0006,.0035),
@@ -327,9 +306,9 @@ const CONFIG = {
         setInterval(() => { if (!document.hidden && Math.random()<.4) shoot(); }, 3500);
     })();
 
-    /* ═══════════════════════════════════════════════════════════
+    /* ═════════════════════════════════════════════════════════
        5. ORBIT MOON
-       ═══════════════════════════════════════════════════════════ */
+       ═════════════════════════════════════════════════════════ */
     (function initOrbitMoon() {
         const moon = $('#orbit-moon'); if (!moon) return;
         let angle = -Math.PI/2;
@@ -347,26 +326,24 @@ const CONFIG = {
         })();
     })();
 
-    /* ═══════════════════════════════════════════════════════════
-       6. DUST PARTICLES
-       ═══════════════════════════════════════════════════════════ */
+    /* ═════════════════════════════════════════════════════════
+       6. DUST
+       ═════════════════════════════════════════════════════════ */
     (function initDust() {
         const cont = $('#dust-container');
         function spawn() {
             if (document.hidden) return;
-            const d = document.createElement('div');
-            d.className = 'dust';
+            const d = document.createElement('div'); d.className = 'dust';
             const sz=rand(1.5,4.5), dur=rand(16,26);
             d.style.cssText=`left:${rand(0,100)}%;top:-${sz}px;width:${sz}px;height:${sz}px;animation-duration:${dur}s;`;
-            cont.appendChild(d);
-            setTimeout(()=>d.remove(), dur*1000);
+            cont.appendChild(d); setTimeout(()=>d.remove(), dur*1000);
         }
         setInterval(spawn, 1900);
     })();
 
-    /* ═══════════════════════════════════════════════════════════
+    /* ═════════════════════════════════════════════════════════
        7. MUSIC PLAYER
-       ═══════════════════════════════════════════════════════════ */
+       ═════════════════════════════════════════════════════════ */
     let audioCtx=null, analyser=null, dataArray=null, vizActive=false;
 
     function setupAudio(audioEl) {
@@ -396,7 +373,7 @@ const CONFIG = {
         const btnShuffle= $('#btn-shuffle');
         if (!music||!musicBtn) return;
 
-        const songs = CONFIG.playlist || [];
+        const songs = CONFIG.playlist||[];
         if (!songs.length) return;
 
         let order=songs.map((_,i)=>i), cursor=0, playing=false, shuffled=false;
@@ -404,22 +381,22 @@ const CONFIG = {
         function buildOrder(fromIndex) {
             order = shuffled ? shuffle(songs.map((_,i)=>i)) : songs.map((_,i)=>i);
             if (fromIndex !== undefined) {
-                const pos=order.indexOf(fromIndex);
+                const pos = order.indexOf(fromIndex);
                 cursor = pos !== -1 ? pos : 0;
             }
         }
         function updateUI() {
-            const song=songs[order[cursor]];
-            if (trackName) trackName.textContent=song?song.title:'–';
-            if (trackNum)  trackNum.textContent=songs.length>1?`${cursor+1} / ${songs.length}`:'';
-            if (btnShuffle) btnShuffle.classList.toggle('active',shuffled);
+            const song = songs[order[cursor]];
+            if (trackName) trackName.textContent = song ? song.title : '–';
+            if (trackNum)  trackNum.textContent  = songs.length > 1 ? `${cursor+1} / ${songs.length}` : '';
+            if (btnShuffle) btnShuffle.classList.toggle('active', shuffled);
         }
-        function fade(audio,to,ms) {
-            const steps=30,stepMs=ms/steps,delta=(to-audio.volume)/steps; let n=0;
+        function fade(audio, to, ms) {
+            const steps=30, stepMs=ms/steps, delta=(to-audio.volume)/steps; let n=0;
             const iv=setInterval(()=>{
                 audio.volume=clamp(audio.volume+delta,0,1);
                 if (++n>=steps){ clearInterval(iv); if(to===0) audio.pause(); }
-            },stepMs);
+            }, stepMs);
         }
         function loadAndPlay(idx) {
             cursor=idx; const song=songs[order[cursor]]; if (!song) return;
@@ -447,10 +424,10 @@ const CONFIG = {
             shuffled=!shuffled; const cur=order[cursor]; buildOrder(cur); updateUI();
         });
         buildOrder(); updateUI();
-        window._startMusic = () => { setupAudio(music); loadAndPlay(shuffled?randInt(0,order.length-1):0); };
+        window._startMusic = () => { setupAudio(music); loadAndPlay(shuffled ? randInt(0,order.length-1) : 0); };
     })();
 
-    /* ─── RING VISUALIZER ────────────────────────────────────── */
+    /* ─── Ring Visualizer ─────────────────────────────────── */
     (function initRingViz() {
         const rc=$('#music-ring-canvas'); if (!rc) return;
         const ctx=rc.getContext('2d'); const S=110; rc.width=rc.height=S;
@@ -474,7 +451,7 @@ const CONFIG = {
         })();
     })();
 
-    /* ─── HORIZON VISUALIZER ─────────────────────────────────── */
+    /* ─── Horizon Visualizer ──────────────────────────────── */
     (function initHorizonViz() {
         const canvas=$('#viz-canvas'); if (!canvas) return;
         const ctx=canvas.getContext('2d');
@@ -503,269 +480,244 @@ const CONFIG = {
         })();
     })();
 
-    /* ═══════════════════════════════════════════════════════════
+    /* ═════════════════════════════════════════════════════════
        8. CURSOR
-       ═══════════════════════════════════════════════════════════ */
+       ═════════════════════════════════════════════════════════ */
     (function initCursor() {
         const cursor=$('.custom-cursor'); if (!cursor) return;
-        let mx=-200,my=-200,cx=-200,cy=-200;
+        let mx=-200, my=-200, cx=-200, cy=-200;
         document.addEventListener('mousemove',e=>{ mx=e.clientX; my=e.clientY; },{ passive:true });
         (function loop() {
             cx=lerp(cx,mx,.12); cy=lerp(cy,my,.12);
             cursor.style.transform=`translate(${cx}px,${cy}px) translate(-50%,-50%)`;
             requestAnimationFrame(loop);
         })();
-        const hoverEls='button,.gallery-item,#close-lightbox,.phase,.list-item,a,.drop-zone,.lb-thumb';
         document.addEventListener('mouseover',e=>{
-            if (e.target.closest(hoverEls)) cursor.classList.add('hovering');
+            if (e.target.closest('button,.gallery-item,#close-lightbox,.phase,.list-item,a,.drop-zone,.lb-thumb'))
+                cursor.classList.add('hovering');
         });
         document.addEventListener('mouseout',e=>{
-            if (e.target.closest(hoverEls)) cursor.classList.remove('hovering');
+            if (e.target.closest('button,.gallery-item,#close-lightbox,.phase,.list-item,a,.drop-zone,.lb-thumb'))
+                cursor.classList.remove('hovering');
         });
         document.addEventListener('mouseleave',()=>{ cursor.style.opacity='0'; });
         document.addEventListener('mouseenter',()=>{ cursor.style.opacity='1'; });
     })();
 
-    /* ═══════════════════════════════════════════════════════════
+    /* ═════════════════════════════════════════════════════════
        9. SCROLL PROGRESS
-       ═══════════════════════════════════════════════════════════ */
+       ═════════════════════════════════════════════════════════ */
     (function() {
-        const bar=$('#scroll-progress');
+        const bar = $('#scroll-progress');
         window.addEventListener('scroll',()=>{
-            const { scrollTop,scrollHeight,clientHeight }=document.documentElement;
-            bar.style.width=clamp(scrollHeight<=clientHeight?100:scrollTop/(scrollHeight-clientHeight)*100,0,100)+'%';
+            const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+            bar.style.width = clamp(scrollHeight<=clientHeight ? 100 : scrollTop/(scrollHeight-clientHeight)*100, 0, 100) + '%';
         },{ passive:true });
     })();
 
-    /* ═══════════════════════════════════════════════════════════
-       10. WELCOME SCREEN
-       ═══════════════════════════════════════════════════════════ */
+    /* ═════════════════════════════════════════════════════════
+       10. WELCOME
+       ═════════════════════════════════════════════════════════ */
     (function initWelcome() {
-        const screen=$('#welcome-screen');
-        const enterBtn=$('#enter-btn');
+        const screen   = $('#welcome-screen');
+        const enterBtn = $('#enter-btn');
         if (!enterBtn) return;
-        enterBtn.addEventListener('click',()=>{
+        enterBtn.addEventListener('click', () => {
             screen.classList.add('fade-out');
             if (window._startMusic) window._startMusic();
         });
     })();
 
-    /* ═══════════════════════════════════════════════════════════
-       11. CARD REVEAL (with stagger)
-       ═══════════════════════════════════════════════════════════ */
+    /* ═════════════════════════════════════════════════════════
+       11. CARD REVEAL
+       ═════════════════════════════════════════════════════════ */
     (function initReveal() {
         function revealList(card) {
-            $$('.list-item',card).forEach((item,i)=>{ setTimeout(()=>item.classList.add('visible'),i*150+260); });
+            $$('.list-item', card).forEach((item,i)=>{ setTimeout(()=>item.classList.add('visible'), i*150+260); });
         }
-        const allCards=$$('.tilt-card');
-        const obs=new IntersectionObserver(entries=>{
-            entries.forEach(entry=>{
+        const allCards = $$('.tilt-card');
+        const obs = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
                 if (!entry.isIntersecting) return;
-                const idx=allCards.indexOf(entry.target);
-                setTimeout(()=>{
+                const idx = allCards.indexOf(entry.target);
+                setTimeout(() => {
                     entry.target.classList.add('visible');
-                    if (entry.target.id==='love-card')   revealList(entry.target);
-                    if (entry.target.id==='letter-card') setTimeout(startTypewriter,900);
-                },60+idx*40);
+                    if (entry.target.id === 'love-card')   revealList(entry.target);
+                    if (entry.target.id === 'letter-card') setTimeout(startTypewriter, 900);
+                }, 60 + idx * 40);
                 obs.unobserve(entry.target);
             });
-        },{ threshold:0.06, rootMargin:'0px 0px -30px 0px' });
-        allCards.forEach(c=>obs.observe(c));
+        }, { threshold: 0.06, rootMargin: '0px 0px -30px 0px' });
+        allCards.forEach(c => obs.observe(c));
     })();
 
-    /* ═══════════════════════════════════════════════════════════
+    /* ═════════════════════════════════════════════════════════
        12. 3D TILT
-       ═══════════════════════════════════════════════════════════ */
+       ═════════════════════════════════════════════════════════ */
     (function initTilt() {
         if (window.matchMedia('(max-width: 768px)').matches) return;
-        $$('.tilt-card').forEach(card=>{
-            let rx=0,ry=0,tx=0,ty=0,inside=false;
-            card.addEventListener('mouseenter',()=>{ inside=true; });
-            card.addEventListener('mousemove',e=>{
+        $$('.tilt-card').forEach(card => {
+            let rx=0, ry=0, tx=0, ty=0, inside=false;
+            card.addEventListener('mouseenter', ()=>{ inside=true; });
+            card.addEventListener('mousemove', e=>{
                 const r=card.getBoundingClientRect();
                 tx=((e.clientY-r.top  -r.height/2)/(r.height/2))*-4.5;
                 ty=((e.clientX-r.left -r.width /2)/(r.width /2))* 4.5;
             },{ passive:true });
-            card.addEventListener('mouseleave',()=>{ inside=false; tx=0; ty=0; });
+            card.addEventListener('mouseleave', ()=>{ inside=false; tx=0; ty=0; });
             (function loop() {
                 rx=lerp(rx,tx,.08); ry=lerp(ry,ty,.08);
-                const settled=Math.abs(rx)<.02&&Math.abs(ry)<.02&&!inside;
-                card.style.transform=settled?'':
+                const settled = Math.abs(rx)<.02 && Math.abs(ry)<.02 && !inside;
+                card.style.transform = settled ? '' :
                     `perspective(1600px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(${inside?-6:0}px)`;
                 requestAnimationFrame(loop);
             })();
         });
     })();
 
-    /* ═══════════════════════════════════════════════════════════
-       13. GALLERY  —  drag-and-drop + file picker + CONFIG images
-       ═══════════════════════════════════════════════════════════ */
-    const galleryImages = []; // unified list: { src, caption, isBlob }
+    /* ═════════════════════════════════════════════════════════
+       13. GALLERY  (drag-and-drop + file picker + CONFIG)
+       ═════════════════════════════════════════════════════════ */
+    const galleryImages = [];
 
     (function initGallery() {
         const grid      = $('#gallery-grid');
         const dropZone  = $('#drop-zone');
         const fileInput = $('#file-input');
-        const hint      = $('#gallery-hint');
-        const meta      = $('#gallery-meta');
+        const hintEl    = $('#gallery-hint');
+        const metaEl    = $('#gallery-meta');
         const countEl   = $('#gallery-count');
         const clearBtn  = $('#gallery-clear');
-        if (!grid||!dropZone) return;
+        if (!grid || !dropZone) return;
 
-        /* ── Load CONFIG images first ────────────────────────── */
-        (CONFIG.gallery||[]).forEach(item=>{
+        // Load CONFIG images
+        (CONFIG.gallery||[]).forEach(item => {
             galleryImages.push({ src: item.src, caption: item.caption||'', isBlob: false });
         });
         if (galleryImages.length) renderGallery();
 
-        /* ── Drag & Drop on the zone ─────────────────────────── */
-        dropZone.addEventListener('click', e=>{
-            if (!e.target.closest('#drop-zone')) return;
-            fileInput.click();
-        });
-        dropZone.addEventListener('keydown', e=>{
-            if (e.key==='Enter'||e.key===' ') fileInput.click();
-        });
+        // Click to open picker
+        dropZone.addEventListener('click', () => fileInput.click());
+        dropZone.addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' ') fileInput.click(); });
 
-        // Drag-over state
+        // Drag events
         let dragDepth = 0;
-        dropZone.addEventListener('dragenter', e=>{ e.preventDefault(); dragDepth++; dropZone.classList.add('drag-over'); });
-        dropZone.addEventListener('dragleave', e=>{ dragDepth--; if (dragDepth<=0){ dragDepth=0; dropZone.classList.remove('drag-over'); } });
-        dropZone.addEventListener('dragover',  e=>{ e.preventDefault(); e.dataTransfer.dropEffect='copy'; });
-        dropZone.addEventListener('drop', e=>{
-            e.preventDefault(); dragDepth=0; dropZone.classList.remove('drag-over');
-            processFiles(e.dataTransfer.files);
-        });
+        dropZone.addEventListener('dragenter', e => { e.preventDefault(); dragDepth++; dropZone.classList.add('drag-over'); });
+        dropZone.addEventListener('dragleave', () => { dragDepth--; if (dragDepth<=0) { dragDepth=0; dropZone.classList.remove('drag-over'); } });
+        dropZone.addEventListener('dragover',  e => { e.preventDefault(); e.dataTransfer.dropEffect='copy'; });
+        dropZone.addEventListener('drop',      e => { e.preventDefault(); dragDepth=0; dropZone.classList.remove('drag-over'); processFiles(e.dataTransfer.files); });
 
-        // Also accept drops on the whole page (when not on welcome screen)
-        document.addEventListener('dragover',  e=>{ if (!$('#welcome-screen.fade-out')) return; e.preventDefault(); });
-        document.addEventListener('drop',      e=>{
-            const ws=$('#welcome-screen');
-            if (ws&&!ws.classList.contains('fade-out')) return;
-            if (e.target.closest('#drop-zone')) return; // handled above
+        // Page-wide drop (after welcome is gone)
+        document.addEventListener('dragover', e => {
+            const ws = $('#welcome-screen');
+            if (!ws || !ws.classList.contains('fade-out')) return;
+            e.preventDefault();
+        });
+        document.addEventListener('drop', e => {
+            const ws = $('#welcome-screen');
+            if (!ws || !ws.classList.contains('fade-out')) return;
+            if (e.target.closest('#drop-zone')) return;
             e.preventDefault();
             processFiles(e.dataTransfer.files);
         });
 
-        /* ── File Input ──────────────────────────────────────── */
-        fileInput.addEventListener('change', ()=>{
-            processFiles(fileInput.files);
-            fileInput.value=''; // reset so same file can be added again
-        });
+        fileInput.addEventListener('change', () => { processFiles(fileInput.files); fileInput.value=''; });
 
-        /* ── Process files ───────────────────────────────────── */
-        function processFiles(files) {
-            const imageFiles = [...files].filter(f=>f.type.startsWith('image/'));
-            if (!imageFiles.length) return;
-
-            let loaded = 0;
-            imageFiles.forEach(file=>{
-                const src     = URL.createObjectURL(file);
-                const caption = captionFromFilename(file.name);
-                galleryImages.push({ src, caption, isBlob:true });
-                loaded++;
-                if (loaded===imageFiles.length) renderGallery();
-            });
-        }
-
-        /* ── Clear button ────────────────────────────────────── */
-        if (clearBtn) clearBtn.addEventListener('click', ()=>{
-            // Revoke blob URLs to free memory
-            galleryImages.forEach(img=>{ if (img.isBlob) URL.revokeObjectURL(img.src); });
+        if (clearBtn) clearBtn.addEventListener('click', () => {
+            galleryImages.forEach(img => { if (img.isBlob) URL.revokeObjectURL(img.src); });
             galleryImages.length = 0;
             renderGallery();
         });
 
-        /* ── Render ──────────────────────────────────────────── */
-        function renderGallery() {
-            // Clear existing
-            while (grid.firstChild) grid.removeChild(grid.firstChild);
+        function processFiles(files) {
+            const imgs = [...files].filter(f => f.type.startsWith('image/'));
+            if (!imgs.length) return;
+            imgs.forEach(file => {
+                galleryImages.push({ src: URL.createObjectURL(file), caption: captionFromFilename(file.name), isBlob: true });
+            });
+            renderGallery();
+        }
 
+        function renderGallery() {
+            // Clear grid
+            while (grid.firstChild) grid.removeChild(grid.firstChild);
             const count = galleryImages.length;
 
-            // Adjust grid layout
-            if (count===0) {
-                grid.style.display='none';
-                if (hint)  hint.style.display='none';
-                if (meta)  meta.style.display='none';
+            if (count === 0) {
+                grid.style.display = 'none';
+                if (hintEl) hintEl.style.display = 'none';
+                if (metaEl) metaEl.style.display = 'none';
+                buildLightboxThumbs();
                 return;
             }
-            grid.style.display='grid';
-            if (count===1)      grid.style.gridTemplateColumns='1fr';
-            else if (count===2) grid.style.gridTemplateColumns='repeat(2,1fr)';
-            else                grid.style.gridTemplateColumns='';
 
-            const frag=document.createDocumentFragment();
-            galleryImages.forEach((item,i)=>{
-                const fig=document.createElement('figure');
-                fig.className='gallery-item';
-                fig.dataset.index=i;
+            grid.style.display = 'grid';
+            grid.style.gridTemplateColumns =
+                count === 1 ? '1fr' :
+                count === 2 ? 'repeat(2,1fr)' : '';
 
-                const img=document.createElement('img');
-                img.src=item.src; img.alt=item.caption||'Memory';
-                img.className='enlargeable'; img.loading='lazy';
+            const frag = document.createDocumentFragment();
+            galleryImages.forEach((item, i) => {
+                const fig = document.createElement('figure');
+                fig.className = 'gallery-item';
+                fig.dataset.index = i;
 
-                const cap=document.createElement('figcaption');
-                cap.textContent=item.caption||'';
+                const img = document.createElement('img');
+                img.src = item.src; img.alt = item.caption || 'Memory'; img.loading = 'lazy';
 
-                // Stagger entrance
-                fig.style.animationDelay=(i*60)+'ms';
-                fig.classList.add('gallery-item-enter');
-                setTimeout(()=>fig.classList.add('gallery-item-visible'), 50+i*60);
+                const cap = document.createElement('figcaption');
+                cap.textContent = item.caption || '';
 
-                fig.appendChild(img); fig.appendChild(cap);
-                frag.appendChild(fig);
+                fig.appendChild(img); fig.appendChild(cap); frag.appendChild(fig);
+                // Stagger visible class
+                setTimeout(() => fig.classList.add('gallery-item-visible'), 40 + i * 55);
             });
             grid.appendChild(frag);
 
-            if (hint)  hint.style.display='';
-            if (meta)  { meta.style.display='flex'; }
-            if (countEl) countEl.textContent=`${count} photo${count!==1?'s':''}`;
+            if (hintEl) hintEl.style.display = '';
+            if (metaEl) metaEl.style.display = 'flex';
+            if (countEl) countEl.textContent = `${count} photo${count!==1?'s':''}`;
 
-            // Rebuild lightbox thumbs
             buildLightboxThumbs();
         }
 
-        // Expose render for lightbox
-        window._galleryImages = galleryImages;
-        window._renderGallery = renderGallery;
+        window._galleryImages  = galleryImages;
+        window._renderGallery  = renderGallery;
     })();
 
-    /* ═══════════════════════════════════════════════════════════
-       14. LIGHTBOX  (with thumbnail strip)
-       ═══════════════════════════════════════════════════════════ */
+    /* ═════════════════════════════════════════════════════════
+       14. LIGHTBOX
+       ═════════════════════════════════════════════════════════ */
     (function initLightbox() {
-        const box       = $('#lightbox');
-        const imgEl     = $('#lightbox-img');
-        const caption   = $('#lightbox-caption');
-        const backdrop  = $('#lightbox-backdrop');
-        const closeBtn  = $('#close-lightbox');
-        const btnPrev   = $('#lb-prev');
-        const btnNext   = $('#lb-next');
-        const thumbsEl  = $('#lb-thumbs');
+        const box      = $('#lightbox');
+        const imgEl    = $('#lightbox-img');
+        const caption  = $('#lightbox-caption');
+        const backdrop = $('#lightbox-backdrop');
+        const closeBtn = $('#close-lightbox');
+        const btnPrev  = $('#lb-prev');
+        const btnNext  = $('#lb-next');
+        const thumbsEl = $('#lb-thumbs');
         if (!box) return;
 
         let currentIdx = 0;
 
         function setImg(idx) {
-            const images = galleryImages;
-            if (!images.length) return;
-            currentIdx = ((idx % images.length) + images.length) % images.length;
-            const item = images[currentIdx];
-            imgEl.style.opacity='0';
-            const pre=new Image();
-            pre.onload=()=>{ imgEl.src=item.src; requestAnimationFrame(()=>requestAnimationFrame(()=>{ imgEl.style.opacity='1'; })); };
-            pre.onerror=()=>{ imgEl.src=item.src; imgEl.style.opacity='1'; };
-            pre.src=item.src;
-            if (caption) caption.textContent=item.caption||'';
-            const showNav=images.length>1;
-            if (btnPrev) btnPrev.style.display=showNav?'':'none';
-            if (btnNext) btnNext.style.display=showNav?'':'none';
-            // Update active thumb
+            if (!galleryImages.length) return;
+            currentIdx = ((idx % galleryImages.length) + galleryImages.length) % galleryImages.length;
+            const item = galleryImages[currentIdx];
+            imgEl.style.opacity = '0';
+            const pre = new Image();
+            pre.onload = () => { imgEl.src = item.src; requestAnimationFrame(() => requestAnimationFrame(() => { imgEl.style.opacity = '1'; })); };
+            pre.onerror = () => { imgEl.src = item.src; imgEl.style.opacity = '1'; };
+            pre.src = item.src;
+            if (caption) caption.textContent = item.caption || '';
+            const showNav = galleryImages.length > 1;
+            if (btnPrev) btnPrev.style.display = showNav ? '' : 'none';
+            if (btnNext) btnNext.style.display = showNav ? '' : 'none';
+            // Sync active thumb
             if (thumbsEl) {
-                $$('.lb-thumb',thumbsEl).forEach((t,i)=>t.classList.toggle('active',i===currentIdx));
-                // Scroll active thumb into view
-                const active=thumbsEl.querySelector('.lb-thumb.active');
+                $$('.lb-thumb', thumbsEl).forEach((t,i) => t.classList.toggle('active', i===currentIdx));
+                const active = thumbsEl.querySelector('.lb-thumb.active');
                 if (active) active.scrollIntoView({ behavior:'smooth', block:'nearest', inline:'center' });
             }
         }
@@ -773,71 +725,67 @@ const CONFIG = {
         function open(idx) {
             setImg(idx);
             box.classList.add('open'); box.setAttribute('aria-hidden','false');
-            document.body.style.overflow='hidden';
+            document.body.style.overflow = 'hidden';
         }
         function close() {
             box.classList.remove('open'); box.setAttribute('aria-hidden','true');
-            document.body.style.overflow='';
-            setTimeout(()=>{ imgEl.src=''; imgEl.style.opacity='0'; },550);
+            document.body.style.overflow = '';
+            setTimeout(() => { imgEl.src = ''; imgEl.style.opacity = '0'; }, 550);
         }
 
-        // Build thumb strip
-        window.buildLightboxThumbs = function() {
+        window.buildLightboxThumbs = function () {
             if (!thumbsEl) return;
             while (thumbsEl.firstChild) thumbsEl.removeChild(thumbsEl.firstChild);
-            const images = galleryImages;
-            if (images.length < 2) { thumbsEl.style.display='none'; return; }
-            thumbsEl.style.display='flex';
-            images.forEach((item,i)=>{
-                const btn=document.createElement('button');
-                btn.className='lb-thumb'; btn.setAttribute('aria-label',`Photo ${i+1}`);
-                const img=document.createElement('img');
-                img.src=item.src; img.alt=''; img.loading='lazy';
+            if (galleryImages.length < 2) { thumbsEl.classList.remove('has-thumbs'); return; }
+            thumbsEl.classList.add('has-thumbs');
+            galleryImages.forEach((item,i) => {
+                const btn = document.createElement('button');
+                btn.className = 'lb-thumb'; btn.setAttribute('aria-label', `Photo ${i+1}`);
+                const img = document.createElement('img'); img.src = item.src; img.alt = ''; img.loading = 'lazy';
                 btn.appendChild(img);
-                btn.addEventListener('click',e=>{ e.stopPropagation(); setImg(i); });
+                btn.addEventListener('click', e => { e.stopPropagation(); setImg(i); });
                 thumbsEl.appendChild(btn);
             });
         };
 
-        // Click on gallery item
-        document.addEventListener('click',e=>{
-            const item=e.target.closest('.gallery-item');
-            if (item) { e.preventDefault(); e.stopPropagation(); const idx=parseInt(item.dataset.index,10); open(isNaN(idx)?0:idx); }
+        document.addEventListener('click', e => {
+            const item = e.target.closest('.gallery-item');
+            if (item) { e.preventDefault(); e.stopPropagation(); const idx = parseInt(item.dataset.index,10); open(isNaN(idx)?0:idx); }
         });
-
-        if (btnPrev) btnPrev.addEventListener('click',e=>{ e.stopPropagation(); setImg(currentIdx-1); });
-        if (btnNext) btnNext.addEventListener('click',e=>{ e.stopPropagation(); setImg(currentIdx+1); });
-        backdrop.addEventListener('click',close);
-        closeBtn.addEventListener('click',e=>{ e.stopPropagation(); close(); });
-        document.addEventListener('keydown',e=>{
+        if (btnPrev) btnPrev.addEventListener('click', e => { e.stopPropagation(); setImg(currentIdx-1); });
+        if (btnNext) btnNext.addEventListener('click', e => { e.stopPropagation(); setImg(currentIdx+1); });
+        backdrop.addEventListener('click', close);
+        closeBtn.addEventListener('click', e => { e.stopPropagation(); close(); });
+        document.addEventListener('keydown', e => {
             if (!box.classList.contains('open')) return;
-            if (e.key==='Escape') close();
-            if (e.key==='ArrowLeft')  setImg(currentIdx-1);
-            if (e.key==='ArrowRight') setImg(currentIdx+1);
+            if (e.key==='Escape')      close();
+            if (e.key==='ArrowLeft')   setImg(currentIdx-1);
+            if (e.key==='ArrowRight')  setImg(currentIdx+1);
         });
-        let touchX=null;
-        box.addEventListener('touchstart',e=>{ touchX=e.touches[0].clientX; },{ passive:true });
-        box.addEventListener('touchend',e=>{
+        let touchX = null;
+        box.addEventListener('touchstart', e => { touchX=e.touches[0].clientX; },{ passive:true });
+        box.addEventListener('touchend',   e => {
             if (touchX===null) return;
-            const dx=e.changedTouches[0].clientX-touchX; touchX=null;
-            if (Math.abs(dx)>50) setImg(currentIdx+(dx<0?1:-1));
+            const dx = e.changedTouches[0].clientX - touchX; touchX = null;
+            if (Math.abs(dx) > 50) setImg(currentIdx + (dx<0?1:-1));
         });
     })();
 
-    /* ═══════════════════════════════════════════════════════════
-       15. SVG BLOOM TREE
-       ═══════════════════════════════════════════════════════════ */
+    /* ═════════════════════════════════════════════════════════
+       15. BLOOM TREE
+       ═════════════════════════════════════════════════════════ */
     (function initBloom() {
-        const treeSvg=$('#tree-svg');
-        const treeParts=$$('.tp',treeSvg);
-        const fill=$('#water-fill');
-        const levelText=$('#water-count-text');
-        const complText=$('#compliment-text');
-        const btn=$('#compliment-btn');
-        const secret=$('#secret-message');
+        const treeSvg  = $('#tree-svg');
+        const treeParts= $$('.tp', treeSvg);
+        const fill     = $('#water-fill');
+        const levelText= $('#water-count-text');
+        const complText= $('#compliment-text');
+        const btn      = $('#compliment-btn');
+        const secret   = $('#secret-message');
         if (!btn) return;
-        let count=0; const MAX=10;
-        const compliments=[
+
+        let count = 0; const MAX = 10;
+        const compliments = [
             "You've always been more than enough — I hope you know that.",
             "There's no version of my day that doesn't get better when you're in it.",
             "The way you care about things is one of my favourite things about you.",
@@ -849,82 +797,91 @@ const CONFIG = {
             "There's nobody quite like you, and I mean that completely.",
             "The world is genuinely better with you in it. I mean that.",
         ];
+
         function updateTree(n) {
-            treeParts.filter(el=>parseInt(el.dataset.s,10)<=n&&!el.classList.contains('show'))
-                     .forEach((el,i)=>setTimeout(()=>el.classList.add('show'),i*55));
+            treeParts.filter(el => parseInt(el.dataset.s,10) <= n && !el.classList.contains('show'))
+                     .forEach((el,i) => setTimeout(() => el.classList.add('show'), i*55));
         }
-        btn.addEventListener('click',()=>{
-            complText.style.opacity='0';
-            setTimeout(()=>{ complText.textContent=compliments[randInt(0,compliments.length-1)]; complText.style.opacity='1'; },400);
-            if (count>=MAX) return;
+
+        btn.addEventListener('click', () => {
+            complText.style.opacity = '0';
+            setTimeout(() => {
+                complText.textContent = compliments[randInt(0, compliments.length-1)];
+                complText.style.opacity = '1';
+            }, 400);
+            if (count >= MAX) return;
             count++;
-            fill.style.width=(count/MAX*100)+'%'; fill.classList.add('active');
-            levelText.textContent=count<MAX?`Moonlight Level  ${count} / ${MAX}`:'The Moon Tree is in Full Bloom ✦ 🌕';
+            fill.style.width = (count/MAX*100) + '%'; fill.classList.add('active');
+            levelText.textContent = count < MAX
+                ? `Moonlight Level  ${count} / ${MAX}`
+                : 'The Moon Tree is in Full Bloom ✦ 🌕';
             updateTree(count);
-            if (count===MAX) {
-                treeSvg.classList.add('full-bloom'); secret.classList.add('revealed');
-                btn.disabled=true; if (window._shootStar) window._shootStar();
+            if (count === MAX) {
+                treeSvg.classList.add('full-bloom');
+                secret.classList.add('revealed');
+                btn.disabled = true;
+                if (window._shootStar) window._shootStar();
             }
         });
     })();
 
-    /* ═══════════════════════════════════════════════════════════
+    /* ═════════════════════════════════════════════════════════
        16. TYPEWRITER
-       ═══════════════════════════════════════════════════════════ */
-    let typingDone=false;
+       ═════════════════════════════════════════════════════════ */
+    let typingDone = false;
     function startTypewriter() {
-        if (typingDone) return; typingDone=true;
-        const lines=[
+        if (typingDone) return; typingDone = true;
+        const lines = [
             { id:'line-1',   text:'Dear Moon,' },
             { id:'line-2',   text:"I made this for you because I wanted you to have something real — not a text, not a voice note. Something you can come back to. Something that just says: I see you, and I think you're incredible." },
             { id:'line-3',   text:"You make things feel lighter just by being around. That's not nothing. That's actually everything." },
             { id:'line-4',   text:"No matter what, you will always be my cutest person. Even when things are hard, I'll be there." },
             { id:'line-sig', text:'— Water ❤️' },
         ];
-        let li=0,ci=0;
+        let li = 0, ci = 0;
         function tick() {
-            if (li>=lines.length) return;
-            const el=document.getElementById(lines[li].id);
+            if (li >= lines.length) return;
+            const el = document.getElementById(lines[li].id);
             if (!el) { li++; ci=0; setTimeout(tick,10); return; }
-            const text=lines[li].text;
+            const text = lines[li].text;
             if (!el.classList.contains('typing-cursor')) el.classList.add('typing-cursor');
-            if (ci<text.length) { el.textContent+=text[ci++]; setTimeout(tick,28); }
+            if (ci < text.length) { el.textContent += text[ci++]; setTimeout(tick, 28); }
             else {
                 el.classList.remove('typing-cursor'); li++; ci=0;
-                setTimeout(tick,li<lines.length?500:0);
+                setTimeout(tick, li < lines.length ? 500 : 0);
             }
         }
         tick();
     }
 
-    /* ═══════════════════════════════════════════════════════════
+    /* ═════════════════════════════════════════════════════════
        17. CLICK SPARKS
-       ═══════════════════════════════════════════════════════════ */
+       ═════════════════════════════════════════════════════════ */
     (function initSparks() {
-        const syms=['✦','✶','·','⋆','˚','🌙','°','*','♡'];
-        const cols=['#e8c96a','#c4d8f5','#a0b8e8','#f0dfa0','#b0cce8','#f5c0d0'];
-        document.addEventListener('click',e=>{
-            if (e.target.closest('button')||e.target.closest('.gallery-item')||e.target.closest('#drop-zone')) return;
-            const f=document.createDocumentFragment();
-            for (let i=0;i<9;i++) {
-                const el=document.createElement('div'); el.className='click-spark';
-                el.textContent=syms[randInt(0,syms.length-1)];
-                el.style.color=cols[randInt(0,cols.length-1)];
-                el.style.fontSize=rand(.6,1.15)+'rem';
+        const syms = ['✦','✶','·','⋆','˚','🌙','°','*','♡'];
+        const cols = ['#e8c96a','#c4d8f5','#a0b8e8','#f0dfa0','#b0cce8','#f5c0d0'];
+        document.addEventListener('click', e => {
+            if (e.target.closest('button') || e.target.closest('.gallery-item') || e.target.closest('#drop-zone')) return;
+            const f = document.createDocumentFragment();
+            for (let i=0; i<9; i++) {
+                const el = document.createElement('div'); el.className = 'click-spark';
+                el.textContent = syms[randInt(0,syms.length-1)];
+                el.style.color = cols[randInt(0,cols.length-1)];
+                el.style.fontSize = rand(.6,1.15) + 'rem';
                 const angle=rand(0,Math.PI*2), vel=rand(28,72);
-                el.style.setProperty('--tx',Math.cos(angle)*vel+'px');
-                el.style.setProperty('--ty',Math.sin(angle)*vel-24+'px');
-                el.style.setProperty('--rot',rand(-70,70)+'deg');
-                el.style.left=e.clientX+'px'; el.style.top=e.clientY+'px';
-                f.appendChild(el); setTimeout(()=>el.remove(),1000);
+                el.style.setProperty('--tx', Math.cos(angle)*vel+'px');
+                el.style.setProperty('--ty', Math.sin(angle)*vel-24+'px');
+                el.style.setProperty('--rot', rand(-70,70)+'deg');
+                el.style.left = e.clientX+'px'; el.style.top = e.clientY+'px';
+                f.appendChild(el); setTimeout(()=>el.remove(), 1000);
             }
             document.body.appendChild(f);
         },{ passive:true });
     })();
 
-    /* ═══════════════════════════════════════════════════════════
+    /* ═════════════════════════════════════════════════════════
        18. MARRIAGE CERTIFICATE
-       ═══════════════════════════════════════════════════════════ */
+       ═════════════════════════════════════════════════════════ */
     (function initMarriageCert() {
         const signBtn    = $('#cert-sign-btn');
         const sigMoon    = $('#sig-moon-name');
@@ -933,50 +890,26 @@ const CONFIG = {
         const prompt     = $('#cert-prompt');
         const signedNote = $('#cert-signed-note');
         if (!signBtn) return;
-        const msgs=[
+        const msgs = [
             "It's official. Legally binding under moonlight. 🌙",
             "Signed, sealed, and witnessed by every star up there. ✦",
             "You said yes. Water is keeping this forever. 💍",
             "The moon herself has signed. That's final.",
         ];
-        signBtn.addEventListener('click',()=>{
-            if (signBtn.disabled) return; signBtn.disabled=true;
-            const name='Moon ♡'; sigMoon.textContent=''; sigMoon.classList.add('signed'); moonLine.classList.add('signed');
-            let i=0;
+        signBtn.addEventListener('click', () => {
+            if (signBtn.disabled) return; signBtn.disabled = true;
+            const name = 'Moon ♡'; sigMoon.textContent = '';
+            sigMoon.classList.add('signed'); moonLine.classList.add('signed');
+            let i = 0;
             function typeSig() {
-                if (i<name.length) { sigMoon.textContent+=name[i++]; setTimeout(typeSig,82); }
+                if (i < name.length) { sigMoon.textContent += name[i++]; setTimeout(typeSig, 82); }
                 else {
-                    setTimeout(()=>{ seal.classList.add('stamped'); if(window._shootStar) window._shootStar(); spawnConfettiBurst(50); },320);
-                    setTimeout(()=>{ signedNote.textContent=msgs[randInt(0,msgs.length-1)]; signedNote.classList.add('visible'); if(prompt) prompt.style.opacity='0'; signBtn.style.display='none'; },650);
+                    setTimeout(() => { seal.classList.add('stamped'); if(window._shootStar) window._shootStar(); spawnConfettiBurst(50); }, 320);
+                    setTimeout(() => { signedNote.textContent = msgs[randInt(0,msgs.length-1)]; signedNote.classList.add('visible'); if(prompt) prompt.style.opacity='0'; signBtn.style.display='none'; }, 650);
                 }
             }
             typeSig();
         });
-    })();
-
-    /* ═══════════════════════════════════════════════════════════
-       19. PARALLAX on scroll (subtle card offset)
-       ═══════════════════════════════════════════════════════════ */
-    (function initParallax() {
-        if (window.matchMedia('(max-width:768px)').matches) return;
-        const cards=$$('.tilt-card');
-        let ticking=false;
-        window.addEventListener('scroll',()=>{
-            if (ticking) return; ticking=true;
-            requestAnimationFrame(()=>{
-                const cy=window.innerHeight/2;
-                cards.forEach(card=>{
-                    if (!card.classList.contains('visible')) return;
-                    const r=card.getBoundingClientRect();
-                    const dist=(r.top+r.height/2)-cy;
-                    const offset=(dist/window.innerHeight)*10;
-                    // Only apply if not being tilted
-                    if (!card.style.transform||card.style.transform.includes('translateY(-6px)')) return;
-                    card.style.setProperty('--parallax-y', offset.toFixed(2)+'px');
-                });
-                ticking=false;
-            });
-        },{ passive:true });
     })();
 
 })();
